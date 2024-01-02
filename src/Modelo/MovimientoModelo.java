@@ -6,7 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JOptionPane;
 
 public class MovimientoModelo extends ConexionBD {
@@ -155,5 +157,35 @@ public class MovimientoModelo extends ConexionBD {
             cerrarConexion(con);
         }
         return ultimoNumero;
+    }
+    
+    public List<Map<String, Object>> obtenerExistenciasProductos() throws SQLException {
+        List<Map<String, Object>> existenciasProductos = new ArrayList<>();
+        String sql = "SELECT p.codigo, p.descripcion, "
+                   + "SUM(CASE WHEN m.tipoMov = 'ENTRADA' THEN m.cantidadProducto ELSE 0 END) "
+                   + "- SUM(CASE WHEN m.tipoMov = 'SALIDA' THEN m.cantidadProducto ELSE 0 END) AS existencia "
+                   + "FROM productos p "
+                   + "LEFT JOIN movimientos m ON p.codigo = m.codigoProducto "
+                   + "GROUP BY p.codigo, p.descripcion";
+
+        try (Connection con = obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                int codigo = rs.getInt("codigo");
+                String descripcion = rs.getString("descripcion");
+                int existencia = rs.getInt("existencia");
+
+                Map<String, Object> producto = new HashMap<>();
+                producto.put("codigo", codigo);
+                producto.put("descripcion", descripcion);
+                producto.put("existencia", existencia);
+
+                existenciasProductos.add(producto);
+            }
+        }
+
+        return existenciasProductos;
     }
 }
