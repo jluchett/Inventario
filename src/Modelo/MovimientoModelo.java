@@ -115,9 +115,6 @@ public class MovimientoModelo extends ConexionBD {
         return movimientos;
     }
 
-    // Método para actualizar un movimiento por su número de movimiento
-    // los movimientos no se pueden modificar
-
     // Método para eliminar un movimiento por su número de movimiento
     public void eliminarMovimiento(int numeroMov) throws SQLException {
         String consulta = "DELETE FROM movimientos WHERE numeroMov = ?";
@@ -158,32 +155,41 @@ public class MovimientoModelo extends ConexionBD {
         }
         return ultimoNumero;
     }
-    
+
     public List<Map<String, Object>> obtenerExistenciasProductos() throws SQLException {
         List<Map<String, Object>> existenciasProductos = new ArrayList<>();
         String sql = "SELECT p.codigo, p.descripcion, "
-                   + "SUM(CASE WHEN m.tipoMov = 'ENTRADA' THEN m.cantidadProducto ELSE 0 END) "
-                   + "- SUM(CASE WHEN m.tipoMov = 'SALIDA' THEN m.cantidadProducto ELSE 0 END) AS existencia "
-                   + "FROM productos p "
-                   + "LEFT JOIN movimientos m ON p.codigo = m.codigoProducto "
-                   + "GROUP BY p.codigo, p.descripcion";
-
-        try (Connection con = obtenerConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                + "SUM(CASE WHEN m.tipoMov = 'ENTRADA' THEN m.cantidadProducto ELSE 0 END) "
+                + "- SUM(CASE WHEN m.tipoMov = 'SALIDA' THEN m.cantidadProducto ELSE 0 END) AS existencia, "
+                + "m.numeroEstante, m.numeroFila "
+                + "FROM productos p "
+                + "LEFT JOIN movimientos m ON p.codigo = m.codigoProducto "
+                + "GROUP BY p.codigo, p.descripcion, m.numeroEstante, m.numeroFila";
+        Connection con = obtenerConexion();
+        try ( PreparedStatement ps = con.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 int codigo = rs.getInt("codigo");
                 String descripcion = rs.getString("descripcion");
                 int existencia = rs.getInt("existencia");
+                int numeroEstante = rs.getInt("numeroEstante");
+                int numeroFila = rs.getInt("numeroFila");
 
                 Map<String, Object> producto = new HashMap<>();
                 producto.put("codigo", codigo);
                 producto.put("descripcion", descripcion);
                 producto.put("existencia", existencia);
+                producto.put("numeroEstante", numeroEstante);
+                producto.put("numeroFila", numeroFila);
 
                 existenciasProductos.add(producto);
             }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener el último número de movimiento: " + e.getMessage());
+            throw e; // Propagar la excepción para que sea manejada en un nivel superior
+        } finally {
+            // Cerrar la conexión para liberar recursos
+            cerrarConexion(con);
         }
 
         return existenciasProductos;
