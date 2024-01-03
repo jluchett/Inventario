@@ -7,6 +7,9 @@ import Vista.frmPrincipal;
 import Vista.frmProducto;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Map;
+import javax.swing.table.DefaultTableModel;
 
 public class PrincipalControl implements ActionListener {
 
@@ -58,6 +61,9 @@ public class PrincipalControl implements ActionListener {
             formEnt.setTitle("Salidas");
             formEnt.setLocationRelativeTo(null);
             formEnt.setVisible(true);
+        }
+        if (e.getSource() == formPrin.btnExistencia){
+            
         }
     }
 }
