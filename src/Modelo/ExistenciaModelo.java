@@ -50,7 +50,7 @@ public class ExistenciaModelo extends ConexionBD {
         }
         return existenciasProductos;
     }
-    public List<Map<String, Object>> obtenerExistenciasPorDescripcion(String descripcion) throws Exception {
+    public List<Map<String, Object>> ExistenPorDescrip(String descripcion) throws Exception {
         List<Map<String, Object>> existencias = new ArrayList<>();
         String sql = "SELECT p.codigo, p.descripcion, "
                    + "SUM(CASE WHEN m.tipoMov = 'ENTRADA' THEN m.cantidadProducto ELSE 0 END) "
@@ -58,11 +58,12 @@ public class ExistenciaModelo extends ConexionBD {
                    + "m.unidadProducto, m.numeroEstante, m.numeroFila "
                    + "FROM productos p "
                    + "LEFT JOIN movimientos m ON p.codigo = m.codigoProducto "
-                   + "WHERE p.descripcion LIKE ? "
+                   + "WHERE LOWER(p.descripcion) LIKE LOWER(?) "
                    + "GROUP BY p.codigo, p.descripcion, m.unidadProducto, m.numeroEstante, m.numeroFila";
         Connection con = obtenerConexion();
         try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, "%" + descripcion + "%");
+            ps.setString(1, "%" + descripcion.toLowerCase() + "%");
+            System.out.println(ps);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Map<String, Object> existencia = new HashMap<>();

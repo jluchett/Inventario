@@ -1,15 +1,14 @@
 package Controlador;
 
+import Modelo.ExistenciaModelo;
 import Modelo.Movimiento;
 import Modelo.MovimientoModelo;
 import Vista.frmEntradas;
+import Vista.frmExistencia;
 import Vista.frmPrincipal;
 import Vista.frmProducto;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.Map;
-import javax.swing.table.DefaultTableModel;
 
 public class PrincipalControl implements ActionListener {
 
@@ -23,7 +22,7 @@ public class PrincipalControl implements ActionListener {
         this.formPrin.btnProductos.addActionListener(this);
         this.formPrin.btnEntradas.addActionListener(this);
         this.formPrin.btnSalidas.addActionListener(this);
-
+        this.formPrin.btnExistencia.addActionListener(this);
     }
 
     public void Iniciar() {
@@ -50,8 +49,8 @@ public class PrincipalControl implements ActionListener {
             formEnt.setLocationRelativeTo(null);
             formEnt.setVisible(true);
         }
-        if (e.getSource() == formPrin.btnSalidas){
-            
+        if (e.getSource() == formPrin.btnSalidas) {
+
             Movimiento mov = new Movimiento();
             MovimientoModelo modMov = new MovimientoModelo();
             frmEntradas formEnt = new frmEntradas();
@@ -62,8 +61,14 @@ public class PrincipalControl implements ActionListener {
             formEnt.setLocationRelativeTo(null);
             formEnt.setVisible(true);
         }
-        if (e.getSource() == formPrin.btnExistencia){
-            
+        if (e.getSource() == formPrin.btnExistencia) {
+            frmExistencia formExistencias = new frmExistencia();
+            ExistenciaModelo  modExiste = new ExistenciaModelo();
+            ExistenciaControl ctrlExis = new ExistenciaControl(modExiste, formExistencias);
+            formExistencias.lblTitulo.setText("Existencias");
+            formExistencias.setTitle("Existencias");
+            formExistencias.setLocationRelativeTo(null);
+            formExistencias.setVisible(true);
         }
     }
 }
