@@ -16,10 +16,10 @@ public class ExistenciaModelo extends ConexionBD {
         String sql = "SELECT p.codigo, p.descripcion, "
                 + "SUM(CASE WHEN m.tipoMov = 'ENTRADA' THEN m.cantidadProducto ELSE 0 END) "
                 + "- SUM(CASE WHEN m.tipoMov = 'SALIDA' THEN m.cantidadProducto ELSE 0 END) AS existencia, "
-                + "m.numeroEstante, m.numeroFila "
+                + "m.unidadProducto, m.numeroEstante, m.numeroFila "
                 + "FROM productos p "
                 + "LEFT JOIN movimientos m ON p.codigo = m.codigoProducto "
-                + "GROUP BY p.codigo, p.descripcion, m.numeroEstante, m.numeroFila";
+                + "GROUP BY p.codigo, p.descripcion, m.unidadProducto, m.numeroEstante, m.numeroFila";
         Connection con = obtenerConexion();
         try ( PreparedStatement ps = con.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
 
@@ -27,6 +27,7 @@ public class ExistenciaModelo extends ConexionBD {
                 int codigo = rs.getInt("codigo");
                 String descripcion = rs.getString("descripcion");
                 int existencia = rs.getInt("existencia");
+                String unidadProducto = rs.getString("unidadProducto");
                 int numeroEstante = rs.getInt("numeroEstante");
                 int numeroFila = rs.getInt("numeroFila");
 
@@ -34,6 +35,7 @@ public class ExistenciaModelo extends ConexionBD {
                 producto.put("codigo", codigo);
                 producto.put("descripcion", descripcion);
                 producto.put("existencia", existencia);
+                producto.put("unidadProducto", unidadProducto);
                 producto.put("numeroEstante", numeroEstante);
                 producto.put("numeroFila", numeroFila);
 

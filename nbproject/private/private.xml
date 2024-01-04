@@ -3,8 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Vista/frmExistencia.java</file>
             <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Modelo/MovimientoModelo.java</file>
+            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Vista/frmExistencia.java</file>
+            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Controlador/PrincipalControl.java</file>
+            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Modelo/ExistenciaModelo.java</file>
+            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Controlador/ExistenciaControl.java</file>
         </group>
     </open-files>
 </project-private>
