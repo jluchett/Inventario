@@ -48,7 +48,40 @@ public class ExistenciaModelo extends ConexionBD {
             // Cerrar la conexión para liberar recursos
             cerrarConexion(con);
         }
-
         return existenciasProductos;
+    }
+    public List<Map<String, Object>> obtenerExistenciasPorDescripcion(String descripcion) throws Exception {
+        List<Map<String, Object>> existencias = new ArrayList<>();
+        String sql = "SELECT p.codigo, p.descripcion, "
+                   + "SUM(CASE WHEN m.tipoMov = 'ENTRADA' THEN m.cantidadProducto ELSE 0 END) "
+                   + "- SUM(CASE WHEN m.tipoMov = 'SALIDA' THEN m.cantidadProducto ELSE 0 END) AS existencia, "
+                   + "m.unidadProducto, m.numeroEstante, m.numeroFila "
+                   + "FROM productos p "
+                   + "LEFT JOIN movimientos m ON p.codigo = m.codigoProducto "
+                   + "WHERE p.descripcion LIKE ? "
+                   + "GROUP BY p.codigo, p.descripcion, m.unidadProducto, m.numeroEstante, m.numeroFila";
+        Connection con = obtenerConexion();
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, "%" + descripcion + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> existencia = new HashMap<>();
+                    existencia.put("codigo", rs.getInt("codigo"));
+                    existencia.put("descripcion", rs.getString("descripcion"));
+                    existencia.put("existencia", rs.getInt("existencia"));
+                    existencia.put("unidadProducto", rs.getString("unidadProducto"));
+                    existencia.put("numeroEstante", rs.getInt("numeroEstante"));
+                    existencia.put("numeroFila", rs.getInt("numeroFila"));
+                    existencias.add(existencia);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error al obtener Existencias: " + e.getMessage());
+            throw e; // Propagar la excepción para que sea manejada en un nivel superior
+        } finally {
+            // Cerrar la conexión para liberar recursos
+            cerrarConexion(con);
+        }
+        return existencias;
     }
 }
