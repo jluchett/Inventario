@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class ExistenciaControl implements ActionListener {
 
@@ -37,6 +40,22 @@ public class ExistenciaControl implements ActionListener {
         model.addColumn("Estante");
         model.addColumn("Fila");
 
+        // Obtiene el modelo de columnas de la tabla
+        TableColumnModel columnModel = vista.tblExisten.getColumnModel();
+        // Establece el ancho preferido para cada columna
+        columnModel.getColumn(0).setPreferredWidth(70);
+        columnModel.getColumn(1).setPreferredWidth(250);
+        columnModel.getColumn(2).setPreferredWidth(50);
+        columnModel.getColumn(3).setPreferredWidth(50);
+        columnModel.getColumn(4).setPreferredWidth(50);
+        columnModel.getColumn(5).setPreferredWidth(50);
+        
+        // Orientar el texto de la tercera columna hacia la derecha
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        vista.tblExisten.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        vista.tblExisten.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        vista.tblExisten.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
         cargarTabla();
     }
 

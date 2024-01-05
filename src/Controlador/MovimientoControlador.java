@@ -14,7 +14,10 @@ import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import java.util.Date;
 import javax.swing.JFrame;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class MovimientoControlador implements ActionListener, FocusListener {
 
@@ -47,7 +50,23 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         model.addColumn("Estante");
         model.addColumn("Fila");
         model.addColumn("Observacion");
-
+        
+        // Obtiene el modelo de columnas de la tabla
+        TableColumnModel columnModel = vista.tblMovimiento.getColumnModel();
+        // Establece el ancho preferido para cada columna
+        columnModel.getColumn(0).setPreferredWidth(70);
+        columnModel.getColumn(1).setPreferredWidth(300);
+        columnModel.getColumn(2).setPreferredWidth(40);
+        columnModel.getColumn(3).setPreferredWidth(50);
+        columnModel.getColumn(4).setPreferredWidth(50);
+        columnModel.getColumn(5).setPreferredWidth(40);
+        columnModel.getColumn(6).setPreferredWidth(250);
+        
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        vista.tblMovimiento.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
+        vista.tblMovimiento.getColumnModel().getColumn(4).setCellRenderer(rightRenderer);
+        vista.tblMovimiento.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
         obtenerNumMov();
 
         Date fechaActual = new Date();
