@@ -1,4 +1,3 @@
-
 package Controlador;
 
 import Modelo.ExistenciaModelo;
@@ -7,21 +6,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-public class ExistenciaControl implements ActionListener{
+public class ExistenciaControl implements ActionListener {
+
     private ExistenciaModelo modelo;
     private frmExistencia vista;
     private DefaultTableModel model;
-    
-    public ExistenciaControl(ExistenciaModelo modelo, frmExistencia vista)   {
+
+    public ExistenciaControl(ExistenciaModelo modelo, frmExistencia vista) {
         this.modelo = modelo;
         this.vista = vista;
 
         this.vista.btn_buscar.addActionListener(this);
-        
-        model = new DefaultTableModel();
+        this.vista.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Todas las celdas no son editables
+            }
+        };
         this.vista.tblExisten.setModel(model);
         model.addColumn("Codigo");
         model.addColumn("Descripcion");
@@ -29,7 +36,7 @@ public class ExistenciaControl implements ActionListener{
         model.addColumn("Medida");
         model.addColumn("Estante");
         model.addColumn("Fila");
-        
+
         cargarTabla();
     }
 
@@ -39,7 +46,8 @@ public class ExistenciaControl implements ActionListener{
             buscarPorDescripcion();
         }
     }
-    private void cargarTabla(){
+
+    private void cargarTabla() {
         try {
             List<Map<String, Object>> existen = modelo.obtenerExistencias();
             mostrarExistenciasEnTabla(existen);
@@ -47,6 +55,7 @@ public class ExistenciaControl implements ActionListener{
             JOptionPane.showMessageDialog(vista, "Error al cargar tabla.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }
+
     private void buscarPorDescripcion() {
         String descripcion = vista.txt_producto.getText().trim();
         if (!descripcion.isEmpty()) {

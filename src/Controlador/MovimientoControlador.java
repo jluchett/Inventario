@@ -33,7 +33,12 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         this.vista.btnNuevo.addActionListener(this);
         this.vista.btnLimpiar.addActionListener(this);
         // Agregar otros listeners según los botones u otros componentes que necesites
-        model = new DefaultTableModel();
+        model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Todas las celdas no son editables
+            }
+        };
         this.vista.tblMovimiento.setModel(model);
         model.addColumn("Codigo");
         model.addColumn("Descripcion");
@@ -52,7 +57,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         // Mostrar la fecha formateada en el JLabel
         this.vista.lblFecha.setText(fechaFormateada);
 
-        this.vista.tblMovimiento.setEnabled(false);
+        
         this.vista.btnNuevo.setEnabled(false);
         this.vista.txtDescripcion.setEditable(false);
         this.vista.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
