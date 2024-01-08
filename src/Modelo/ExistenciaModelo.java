@@ -63,7 +63,6 @@ public class ExistenciaModelo extends ConexionBD {
         Connection con = obtenerConexion();
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, "%" + descripcion.toLowerCase() + "%");
-            System.out.println(ps);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Map<String, Object> existencia = new HashMap<>();
