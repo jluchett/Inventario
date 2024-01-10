@@ -72,13 +72,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         vista.tblMovimiento.getColumnModel().getColumn(5).setCellRenderer(rightRenderer);
         obtenerNumMov();
 
-        Date fechaActual = new Date();
-        // Formatear la fecha en el formato deseado
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MMMM-yyyy");
-        String fechaFormateada = formatoFecha.format(fechaActual);
-        // Mostrar la fecha formateada en el JLabel
-        this.vista.lblFecha.setText(fechaFormateada);
-
+        fechaActual();
         this.vista.btnNuevo.setEnabled(false);
         this.vista.txtDescripcion.setEditable(false);
         this.vista.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -94,16 +88,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
             }
             JOptionPane.showMessageDialog(null, "Movimiento registrado");
             limpiar();
-            vista.txtCantidad.setEditable(false);
-            vista.txtCodigo.setEditable(false);
-            vista.txtEstante.setEditable(false);
-            vista.txtFila.setEditable(false);
-            vista.txtObservaciones.setEditable(false);
-            vista.btnAgregar.setEnabled(false);
-            vista.btnLimpiar.setEnabled(false);
-            vista.btnGuardar.setEnabled(false);
-            vista.btnNuevo.setEnabled(true);
-            vista.btnCancelar.setEnabled(false);
+            inicialControls();
         } else if (e.getSource() == vista.btnCancelar) {
             cancelarOperacion();
         } else if (e.getSource() == vista.btnAgregar) {
@@ -158,20 +143,40 @@ public class MovimientoControlador implements ActionListener, FocusListener {
                 try {
                     int numeroMovimiento = Integer.parseInt(numeroMovimientoStr);
                     List<Map<String, Object>> movimientos = modelo.obtenerLosMovimientosPorNumero(numeroMovimiento);
-                    model.setRowCount(0); // Limpiar la tabla antes de mostrar los resultados
+                    if (movimientos.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "No hay movimiento");
+                    } else {
+                        model.setRowCount(0); // Limpiar la tabla antes de mostrar los resultados
 
-                    for (Map<String, Object> movimiento : movimientos) {
-                        Object[] row = {
-                            movimiento.get("codigo"),
-                            movimiento.get("descripcion"),
-                            movimiento.get("cantidadProducto"),
-                            movimiento.get("unidadProducto"),
-                            movimiento.get("numeroEstante"),
-                            movimiento.get("numeroFila"),
-                            movimiento.get("observaciones")
-                        };
-                        model.addRow(row);
+                        for (Map<String, Object> movimiento : movimientos) {
+                            vista.lblNumero.setText(String.valueOf(movimiento.get("numeroMov")));
+                            vista.lblEntrada.setText(String.valueOf(movimiento.get("tipoMov")));
+                            if ("ENTRADA".equals(vista.lblEntrada.getText())) {
+                                vista.lblTitulo.setText("Ingresos");
+                                vista.setTitle("Entradas");
+                            } else {
+                                vista.lblTitulo.setText("Salidas");
+                                vista.setTitle("Salidas");
+                            }
+                            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MMMM-yyyy");
+                            String fechaFormateada = formatoFecha.format(movimiento.get("fecha"));
+                            vista.lblFecha.setText(fechaFormateada);
+
+                            Object[] row = {
+                                movimiento.get("codigo"),
+                                movimiento.get("descripcion"),
+                                movimiento.get("cantidadProducto"),
+                                movimiento.get("unidadProducto"),
+                                movimiento.get("numeroEstante"),
+                                movimiento.get("numeroFila"),
+                                movimiento.get("observaciones")
+
+                            };
+                            model.addRow(row);
+                        }
+                        inicialControls();
                     }
+
                 } catch (NumberFormatException | SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Error al buscar el movimiento: " + ex.getMessage());
                 }
@@ -179,6 +184,28 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         }
         // Agregar otros if/else según los botones u otros componentes que necesites manejar
 
+    }
+    
+    private void fechaActual(){
+        Date fechaActual = new Date();
+        // Formatear la fecha en el formato deseado
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MMMM-yyyy");
+        String fechaFormateada = formatoFecha.format(fechaActual);
+        // Mostrar la fecha formateada en el JLabel
+        vista.lblFecha.setText(fechaFormateada);
+    }
+
+    private void inicialControls() {
+        vista.txtCantidad.setEditable(false);
+        vista.txtCodigo.setEditable(false);
+        vista.txtEstante.setEditable(false);
+        vista.txtFila.setEditable(false);
+        vista.txtObservaciones.setEditable(false);
+        vista.btnAgregar.setEnabled(false);
+        vista.btnLimpiar.setEnabled(false);
+        vista.btnGuardar.setEnabled(false);
+        vista.btnNuevo.setEnabled(true);
+        vista.btnCancelar.setEnabled(false);
     }
 
     private void guardarMovimiento() {
@@ -273,6 +300,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         vista.btnNuevo.setEnabled(false);
         vista.btnCancelar.setEnabled(true);
         obtenerNumMov();
+        fechaActual();
     }
 
     public void Iniciar() {
