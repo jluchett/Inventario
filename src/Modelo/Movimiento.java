@@ -102,6 +102,5 @@ public class Movimiento {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-    
-    
+
 }

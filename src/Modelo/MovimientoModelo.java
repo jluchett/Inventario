@@ -1,12 +1,16 @@
 package Modelo;
 
+import static Modelo.ConexionBD.cerrarConexion;
+import static Modelo.ConexionBD.obtenerConexion;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JOptionPane;
 
 public class MovimientoModelo extends ConexionBD {
@@ -43,38 +47,53 @@ public class MovimientoModelo extends ConexionBD {
     }
 
     // Método para obtener todos los movimientos
-    public List<Movimiento> obtenerTodosLosMovimientos() throws SQLException {
-        List<Movimiento> movimientos = new ArrayList<>();
-        String consulta = "SELECT * FROM movimientos";
+    public List<Map<String, Object>> obtenerLosMovimientosPorNumero(int numeroMovimiento) throws SQLException {
+        List<Map<String, Object>> existenciasProductos = new ArrayList<>();
+        String sql = "SELECT m.numeroMov, m.tipoMov, m.codigoProducto ,p.descripcion , m.cantidadProducto, m.unidadProducto, m.numeroEstante, m.numeroFila, m.observaciones, m.fechaMov "
+                + "FROM movimientos m "
+                + "INNER JOIN productos p ON m.codigoProducto = p.codigo "
+                + "WHERE m.numeroMov = ?";
         PreparedStatement ps = null;
         Connection con = obtenerConexion();
-
         try {
-            ps = con.prepareStatement(consulta);
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, numeroMovimiento);
             try ( ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Movimiento movimiento = new Movimiento(
-                            rs.getInt("numeroMov"),
-                            rs.getString("tipoMov"),
-                            rs.getInt("codigoProducto"),
-                            rs.getInt("cantidadProducto"),
-                            rs.getString("unidadProducto"),
-                            rs.getInt("numeroEstante"),
-                            rs.getInt("numeroFila"),
-                            rs.getDate("fechaMov"),
-                            rs.getString("observaciones")
-                    );
-                    movimientos.add(movimiento);
+                    int numero = rs.getInt("numeroMov");
+                    String tipo = rs.getString("tipoMov");
+                    int codigo = rs.getInt("codigoProducto");
+                    String descripcion = rs.getString("descripcion");
+                    int cantidad = rs.getInt("cantidadProducto");
+                    String unidadProducto = rs.getString("unidadProducto");
+                    int numeroEstante = rs.getInt("numeroEstante");
+                    int numeroFila = rs.getInt("numeroFila");
+                    String observaciones = rs.getString("observaciones");
+                    Date fecha = rs.getDate("fechaMov");
+
+                    Map<String, Object> producto = new HashMap<>();
+                    producto.put("numeroMov", numero);
+                    producto.put("tipoMov", tipo);
+                    producto.put("codigo", codigo);
+                    producto.put("descripcion", descripcion);
+                    producto.put("cantidadProducto", cantidad);
+                    producto.put("unidadProducto", unidadProducto);
+                    producto.put("numeroEstante", numeroEstante);
+                    producto.put("numeroFila", numeroFila);
+                    producto.put("observaciones", observaciones);
+                    producto.put("fecha", fecha);
+
+                    existenciasProductos.add(producto);
                 }
             }
         } catch (SQLException e) {
-            // Manejo de la excepción: enviar mensaje de error o tomar acciones correctivas
-            System.err.println("Error al ejecutar la operación en la base de datos: " + e.getMessage());
+            System.err.println("Error al obtener Existencias: " + e.getMessage());
+            throw e; // Propagar la excepción para que sea manejada en un nivel superior
         } finally {
             // Cerrar la conexión para liberar recursos
             cerrarConexion(con);
         }
-        return movimientos;
+        return existenciasProductos;
     }
 
     // Método para obtener movimientos por tipo (ENTRADA o SALIDA)

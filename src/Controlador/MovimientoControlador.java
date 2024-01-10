@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -35,6 +37,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         this.vista.txtCodigo.addFocusListener(this);
         this.vista.btnNuevo.addActionListener(this);
         this.vista.btnLimpiar.addActionListener(this);
+        this.vista.btnBuscar.addActionListener(this);
         // Agregar otros listeners según los botones u otros componentes que necesites
         model = new DefaultTableModel() {
             @Override
@@ -50,7 +53,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         model.addColumn("Estante");
         model.addColumn("Fila");
         model.addColumn("Observacion");
-        
+
         // Obtiene el modelo de columnas de la tabla
         TableColumnModel columnModel = vista.tblMovimiento.getColumnModel();
         // Establece el ancho preferido para cada columna
@@ -61,7 +64,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         columnModel.getColumn(4).setPreferredWidth(50);
         columnModel.getColumn(5).setPreferredWidth(40);
         columnModel.getColumn(6).setPreferredWidth(250);
-        
+
         DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         vista.tblMovimiento.getColumnModel().getColumn(2).setCellRenderer(rightRenderer);
@@ -76,7 +79,6 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         // Mostrar la fecha formateada en el JLabel
         this.vista.lblFecha.setText(fechaFormateada);
 
-        
         this.vista.btnNuevo.setEnabled(false);
         this.vista.txtDescripcion.setEditable(false);
         this.vista.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -150,6 +152,30 @@ public class MovimientoControlador implements ActionListener, FocusListener {
             reiniciar();
         } else if (e.getSource() == vista.btnLimpiar) {
             limpiar();
+        } else if (e.getSource() == vista.btnBuscar) {
+            String numeroMovimientoStr = JOptionPane.showInputDialog(null, "Ingrese el número de movimiento:");
+            if (numeroMovimientoStr != null && !numeroMovimientoStr.isEmpty()) {
+                try {
+                    int numeroMovimiento = Integer.parseInt(numeroMovimientoStr);
+                    List<Map<String, Object>> movimientos = modelo.obtenerLosMovimientosPorNumero(numeroMovimiento);
+                    model.setRowCount(0); // Limpiar la tabla antes de mostrar los resultados
+
+                    for (Map<String, Object> movimiento : movimientos) {
+                        Object[] row = {
+                            movimiento.get("codigo"),
+                            movimiento.get("descripcion"),
+                            movimiento.get("cantidadProducto"),
+                            movimiento.get("unidadProducto"),
+                            movimiento.get("numeroEstante"),
+                            movimiento.get("numeroFila"),
+                            movimiento.get("observaciones")
+                        };
+                        model.addRow(row);
+                    }
+                } catch (NumberFormatException | SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error al buscar el movimiento: " + ex.getMessage());
+                }
+            }
         }
         // Agregar otros if/else según los botones u otros componentes que necesites manejar
 
@@ -173,7 +199,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         // Llamar al método en el modelo para guardar el movimiento
         try {
             modelo.agregarMovimiento(movimiento);
-            
+
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error al guardar el movimiento: " + ex.getMessage());
         }
@@ -212,7 +238,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
     private void cancelarOperacion() {
         // Lógica para cancelar la operación, por ejemplo, limpiar los campos del formulario
         if (model.getRowCount() == 0) {
-            
+
         } else {
             int opcion = JOptionPane.showConfirmDialog(null, "¿Está seguro que desea cancelar?", "Perdera lo que ha realizado", JOptionPane.YES_NO_OPTION);
 
@@ -227,28 +253,27 @@ public class MovimientoControlador implements ActionListener, FocusListener {
                     JOptionPane.showMessageDialog(null, "Error al buscar el producto:" + e.getMessage());
                 }
 
-                
             } else {
                 // Si el usuario selecciona "No", no hacer nada o realizar alguna otra acción
                 // ...
             }
         }
     }
-    private void reiniciar(){
+
+    private void reiniciar() {
         model.setRowCount(0);
-            vista.txtCantidad.setEditable(true);
-            vista.txtCodigo.setEditable(true);
-            vista.txtEstante.setEditable(true);
-            vista.txtFila.setEditable(true);
-            vista.txtObservaciones.setEditable(true);
-            vista.btnAgregar.setEnabled(true);
-            vista.btnLimpiar.setEnabled(true);
-            vista.btnGuardar.setEnabled(true);
-            vista.btnNuevo.setEnabled(false);
-            vista.btnCancelar.setEnabled(true);
-            obtenerNumMov();
+        vista.txtCantidad.setEditable(true);
+        vista.txtCodigo.setEditable(true);
+        vista.txtEstante.setEditable(true);
+        vista.txtFila.setEditable(true);
+        vista.txtObservaciones.setEditable(true);
+        vista.btnAgregar.setEnabled(true);
+        vista.btnLimpiar.setEnabled(true);
+        vista.btnGuardar.setEnabled(true);
+        vista.btnNuevo.setEnabled(false);
+        vista.btnCancelar.setEnabled(true);
+        obtenerNumMov();
     }
-    
 
     public void Iniciar() {
         vista.setTitle("Ingreesos");
