@@ -18,7 +18,8 @@ public class ExistenciaModelo extends ConexionBD {
                 + "m.unidadProducto, m.numeroEstante, m.numeroFila "
                 + "FROM productos p "
                 + "LEFT JOIN movimientos m ON p.codigo = m.codigoProducto "
-                + "GROUP BY p.codigo, p.descripcion, m.unidadProducto, m.numeroEstante, m.numeroFila";
+                + "GROUP BY p.codigo, p.descripcion, m.unidadProducto, m.numeroEstante, m.numeroFila "
+                + "ORDER BY p.descripcion";
         Connection con = obtenerConexion();
         try ( PreparedStatement ps = con.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
 
@@ -59,7 +60,8 @@ public class ExistenciaModelo extends ConexionBD {
                 + "FROM productos p "
                 + "LEFT JOIN movimientos m ON p.codigo = m.codigoProducto "
                 + "WHERE LOWER(p.descripcion) LIKE LOWER(?) "
-                + "GROUP BY p.codigo, p.descripcion, m.unidadProducto, m.numeroEstante, m.numeroFila";
+                + "GROUP BY p.codigo, p.descripcion, m.unidadProducto, m.numeroEstante, m.numeroFila "
+                + "ORDER BY p.descripcion";
         Connection con = obtenerConexion();
         try ( PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, "%" + descripcion.toLowerCase() + "%");
