@@ -1,4 +1,3 @@
-
 package Modelo;
 
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.sql.ResultSet;
 import java.util.HashMap;
 
 public class ExistenciaModelo extends ConexionBD {
-    
+
     public List<Map<String, Object>> obtenerExistencias() throws Exception {
         List<Map<String, Object>> existenciasProductos = new ArrayList<>();
         String sql = "SELECT p.codigo, p.descripcion, "
@@ -50,20 +49,21 @@ public class ExistenciaModelo extends ConexionBD {
         }
         return existenciasProductos;
     }
+
     public List<Map<String, Object>> ExistenPorDescrip(String descripcion) throws Exception {
         List<Map<String, Object>> existencias = new ArrayList<>();
         String sql = "SELECT p.codigo, p.descripcion, "
-                   + "SUM(CASE WHEN m.tipoMov = 'ENTRADA' THEN m.cantidadProducto ELSE 0 END) "
-                   + "- SUM(CASE WHEN m.tipoMov = 'SALIDA' THEN m.cantidadProducto ELSE 0 END) AS existencia, "
-                   + "m.unidadProducto, m.numeroEstante, m.numeroFila "
-                   + "FROM productos p "
-                   + "LEFT JOIN movimientos m ON p.codigo = m.codigoProducto "
-                   + "WHERE LOWER(p.descripcion) LIKE LOWER(?) "
-                   + "GROUP BY p.codigo, p.descripcion, m.unidadProducto, m.numeroEstante, m.numeroFila";
+                + "SUM(CASE WHEN m.tipoMov = 'ENTRADA' THEN m.cantidadProducto ELSE 0 END) "
+                + "- SUM(CASE WHEN m.tipoMov = 'SALIDA' THEN m.cantidadProducto ELSE 0 END) AS existencia, "
+                + "m.unidadProducto, m.numeroEstante, m.numeroFila "
+                + "FROM productos p "
+                + "LEFT JOIN movimientos m ON p.codigo = m.codigoProducto "
+                + "WHERE LOWER(p.descripcion) LIKE LOWER(?) "
+                + "GROUP BY p.codigo, p.descripcion, m.unidadProducto, m.numeroEstante, m.numeroFila";
         Connection con = obtenerConexion();
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+        try ( PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, "%" + descripcion.toLowerCase() + "%");
-            try (ResultSet rs = ps.executeQuery()) {
+            try ( ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Map<String, Object> existencia = new HashMap<>();
                     existencia.put("codigo", rs.getInt("codigo"));

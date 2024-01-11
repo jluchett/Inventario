@@ -5,16 +5,21 @@ import Modelo.MovimientoModelo;
 import Modelo.Producto;
 import Modelo.ProductoModelo;
 import Vista.frmEntradas;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -76,6 +81,42 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         this.vista.btnNuevo.setEnabled(false);
         this.vista.txtDescripcion.setEditable(false);
         this.vista.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.vista.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // Aquí puedes colocar el código para comprobar si se ha guardado el progreso
+                // Por ejemplo, podrías verificar si hay datos en el modelo que aún no se han guardado
+                if (vista.btnNuevo.isEnabled()) {
+                    ((Window) e.getSource()).dispose();
+                    return;
+                } else {
+
+                }
+                if (model.getRowCount() > 0) {
+                    int opcion = JOptionPane.showConfirmDialog(null, "¿Desea guardar los cambios antes de salir?", "Guardar cambios", JOptionPane.YES_NO_CANCEL_OPTION);
+                    if (opcion == JOptionPane.YES_OPTION) {
+                        // Guardar los cambios
+                        JOptionPane.showMessageDialog(null, "Movimiento registrado");
+                        limpiar();
+                        inicialControls();
+                        ((Window) e.getSource()).dispose();
+                    } else if (opcion == JOptionPane.NO_OPTION) {
+                        // No guardar los cambios
+                        int numMov = Integer.parseInt(vista.lblNumero.getText());
+                        try {
+                            modelo.eliminarMovimiento(numMov);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(MovimientoControlador.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        ((Window) e.getSource()).dispose();
+                    } else {
+                        // Cancelar el cierre de la ventana
+                        // Esto se hace para evitar que la ventana se cierre si el usuario cancela el diálogo de confirmación
+                        vista.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -185,8 +226,8 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         // Agregar otros if/else según los botones u otros componentes que necesites manejar
 
     }
-    
-    private void fechaActual(){
+
+    private void fechaActual() {
         Date fechaActual = new Date();
         // Formatear la fecha en el formato deseado
         SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MMMM-yyyy");
