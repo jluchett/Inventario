@@ -87,32 +87,30 @@ public class MovimientoControlador implements ActionListener, FocusListener {
                 // Aquí puedes colocar el código para comprobar si se ha guardado el progreso
                 // Por ejemplo, podrías verificar si hay datos en el modelo que aún no se han guardado
                 if (vista.btnNuevo.isEnabled()) {
-                    ((Window) e.getSource()).dispose();
-                    return;
+                    ((Window) e.getSource()).dispose();                    
                 } else {
-
-                }
-                if (model.getRowCount() > 0) {
-                    int opcion = JOptionPane.showConfirmDialog(null, "¿Desea guardar los cambios antes de salir?", "Guardar cambios", JOptionPane.YES_NO_CANCEL_OPTION);
-                    if (opcion == JOptionPane.YES_OPTION) {
-                        // Guardar los cambios
-                        JOptionPane.showMessageDialog(null, "Movimiento registrado");
-                        limpiar();
-                        inicialControls();
-                        ((Window) e.getSource()).dispose();
-                    } else if (opcion == JOptionPane.NO_OPTION) {
-                        // No guardar los cambios
-                        int numMov = Integer.parseInt(vista.lblNumero.getText());
-                        try {
-                            modelo.eliminarMovimiento(numMov);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(MovimientoControlador.class.getName()).log(Level.SEVERE, null, ex);
+                    if (model.getRowCount() > 0) {
+                        int opcion = JOptionPane.showConfirmDialog(null, "¿Desea guardar los cambios antes de salir?", "Guardar cambios", JOptionPane.YES_NO_CANCEL_OPTION);
+                        if (opcion == JOptionPane.YES_OPTION) {
+                            // Guardar los cambios
+                            JOptionPane.showMessageDialog(null, "Movimiento registrado");
+                            limpiar();
+                            inicialControls();
+                            ((Window) e.getSource()).dispose();
+                        } else if (opcion == JOptionPane.NO_OPTION) {
+                            // No guardar los cambios
+                            int numMov = Integer.parseInt(vista.lblNumero.getText());
+                            try {
+                                modelo.eliminarMovimiento(numMov);
+                            } catch (SQLException ex) {
+                                Logger.getLogger(MovimientoControlador.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            ((Window) e.getSource()).dispose();
+                        } else {
+                            // Cancelar el cierre de la ventana
+                            // Esto se hace para evitar que la ventana se cierre si el usuario cancela el diálogo de confirmación
+                            vista.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                         }
-                        ((Window) e.getSource()).dispose();
-                    } else {
-                        // Cancelar el cierre de la ventana
-                        // Esto se hace para evitar que la ventana se cierre si el usuario cancela el diálogo de confirmación
-                        vista.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                     }
                 }
             }
@@ -174,6 +172,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
             model.addRow(fila);
             guardarMovimiento();
             limpiar();
+            vista.btnBuscar.setEnabled(false);
         } else if (e.getSource() == vista.btnNuevo) {
             reiniciar();
         } else if (e.getSource() == vista.btnLimpiar) {
@@ -247,6 +246,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         vista.btnGuardar.setEnabled(false);
         vista.btnNuevo.setEnabled(true);
         vista.btnCancelar.setEnabled(false);
+        vista.btnBuscar.setEnabled(true);
     }
 
     private void guardarMovimiento() {
