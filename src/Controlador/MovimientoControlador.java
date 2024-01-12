@@ -43,6 +43,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
         this.vista.btnNuevo.addActionListener(this);
         this.vista.btnLimpiar.addActionListener(this);
         this.vista.btnBuscar.addActionListener(this);
+        this.vista.txtCodigo.addActionListener(this);
         // Agregar otros listeners según los botones u otros componentes que necesites
         model = new DefaultTableModel() {
             @Override
@@ -87,7 +88,7 @@ public class MovimientoControlador implements ActionListener, FocusListener {
                 // Aquí puedes colocar el código para comprobar si se ha guardado el progreso
                 // Por ejemplo, podrías verificar si hay datos en el modelo que aún no se han guardado
                 if (vista.btnNuevo.isEnabled()) {
-                    ((Window) e.getSource()).dispose();                    
+                    ((Window) e.getSource()).dispose();
                 } else {
                     if (model.getRowCount() > 0) {
                         int opcion = JOptionPane.showConfirmDialog(null, "¿Desea guardar los cambios antes de salir?", "Guardar cambios", JOptionPane.YES_NO_CANCEL_OPTION);
@@ -177,6 +178,8 @@ public class MovimientoControlador implements ActionListener, FocusListener {
             reiniciar();
         } else if (e.getSource() == vista.btnLimpiar) {
             limpiar();
+        } else if (e.getSource() == vista.txtCodigo) {
+            buscarProducto();
         } else if (e.getSource() == vista.btnBuscar) {
             String numeroMovimientoStr = JOptionPane.showInputDialog(null, "Ingrese el número de movimiento:");
             if (numeroMovimientoStr != null && !numeroMovimientoStr.isEmpty()) {
@@ -359,25 +362,29 @@ public class MovimientoControlador implements ActionListener, FocusListener {
     @Override
     public void focusLost(FocusEvent e) {
         if (e.getSource() == vista.txtCodigo) {
-            if ("".equals(vista.txtCodigo.getText())) {
-                return;
-            }
-            int codigo = Integer.parseInt(vista.txtCodigo.getText());
-            Producto modProd = new Producto();
-            ProductoModelo operProd = new ProductoModelo();
-            modProd.setCodigo(codigo);
-            try {
-                if (operProd.searchProd(modProd)) {
-                    vista.txtDescripcion.setText(modProd.getDescripcion());
-                    vista.txtCantidad.requestFocus();
-                } else {
+            buscarProducto();
+        }
+    }
 
-                    vista.txtDescripcion.setText("");
-                    vista.txtCodigo.requestFocus();
-                }
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(null, "Error al buscar el producto:" + ex.getMessage());
+    private void buscarProducto() {
+        if ("".equals(vista.txtCodigo.getText())) {
+            return;
+        }
+        int codigo = Integer.parseInt(vista.txtCodigo.getText());
+        Producto modProd = new Producto();
+        ProductoModelo operProd = new ProductoModelo();
+        modProd.setCodigo(codigo);
+        try {
+            if (operProd.searchProd(modProd)) {
+                vista.txtDescripcion.setText(modProd.getDescripcion());
+                vista.txtCantidad.requestFocus();
+            } else {
+
+                vista.txtDescripcion.setText("");
+
             }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error al buscar el producto:" + ex.getMessage());
         }
     }
 }
