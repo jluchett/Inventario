@@ -51,7 +51,7 @@ public class ListaProdsControl implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == vista.btnBuscarProd){
-            
+            buscarPorDescripcion();
         }
     }
 
@@ -73,6 +73,19 @@ public class ListaProdsControl implements ActionListener {
                 producto.getDescripcion()
             };
             modTable.addRow(row);
+        }
+    }
+    private void buscarPorDescripcion() {
+        String descripcion = vista.txtNomProd.getText().trim();
+        if (!descripcion.isEmpty()) {
+            try {
+                List<Producto> productos = prodMod.buscarProductosPorDescripcion(descripcion);
+                mostrarExistenciasEnTabla(productos);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(vista, "Error al buscar existencias: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            cargarTabla();
         }
     }
     

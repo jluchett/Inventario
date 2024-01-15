@@ -85,23 +85,49 @@ public class ProductoModelo extends ConexionBD {
             cerrarConexion(con);
         }
     }
-    
+
     public List<Producto> obtenerTodosLosProductos() throws SQLException {
         List<Producto> productos = new ArrayList<>();
         String consulta = "SELECT * FROM productos";
+        Connection con = obtenerConexion();
         try (
-            Connection con = obtenerConexion();
-            PreparedStatement ps = con.prepareStatement(consulta);
-            ResultSet rs = ps.executeQuery()
-        ) {
+                 PreparedStatement ps = con.prepareStatement(consulta);  ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Producto producto = new Producto(
-                    rs.getInt("codigo"),
-                    rs.getString("descripcion")  
+                        rs.getInt("codigo"),
+                        rs.getString("descripcion")
                 );
                 productos.add(producto);
             }
+        } catch (SQLException e) {
+            System.err.println("Error al consultar en la base de datos: " + e.getMessage());
+        } finally {
+            cerrarConexion(con);
         }
         return productos;
+    }
+
+    public List<Producto> buscarProductosPorDescripcion(String descripcion) throws SQLException {
+        List<Producto> productosEncontrados = new ArrayList<>();
+        String consulta = "SELECT * FROM productos WHERE LOWER(descripcion) LIKE LOWER(?)";
+        Connection con = obtenerConexion();
+        try (
+                 PreparedStatement ps = con.prepareStatement(consulta)) {
+            ps.setString(1, "%" + descripcion.toLowerCase() + "%");
+            try ( ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Producto producto = new Producto(
+                            rs.getInt("codigo"),
+                            rs.getString("descripcion")
+                    );
+                    productosEncontrados.add(producto);
+                }
+            } catch (SQLException e) {
+                System.err.println("Error al consultar en la base de datos: " + e.getMessage());
+            } finally {
+                cerrarConexion(con);
+            }
+        }
+        return productosEncontrados;
     }
 }
