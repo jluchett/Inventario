@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import Modelo.Producto;
 import Modelo.ProductoModelo;
+import Vista.frmBuscarProd;
 import Vista.frmProducto;
 import java.awt.HeadlessException;
 import java.awt.event.FocusEvent;
@@ -144,7 +145,10 @@ public class ProductoControlador implements ActionListener, FocusListener {
             formProd.txtCodigoProd.requestFocus();
 
         } else if (e.getSource() == formProd.btnBuscarProd) {
-
+            frmBuscarProd formBusc = new frmBuscarProd();
+            ListaProdsControl ctrlListProd = new ListaProdsControl(operProd, formBusc);
+            formBusc.setLocationRelativeTo(null);
+            formBusc.setVisible(true);
         }
     }
 

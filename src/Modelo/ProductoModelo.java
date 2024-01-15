@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductoModelo extends ConexionBD {
 
@@ -82,5 +84,24 @@ public class ProductoModelo extends ConexionBD {
         } finally {
             cerrarConexion(con);
         }
+    }
+    
+    public List<Producto> obtenerTodosLosProductos() throws SQLException {
+        List<Producto> productos = new ArrayList<>();
+        String consulta = "SELECT * FROM productos";
+        try (
+            Connection con = obtenerConexion();
+            PreparedStatement ps = con.prepareStatement(consulta);
+            ResultSet rs = ps.executeQuery()
+        ) {
+            while (rs.next()) {
+                Producto producto = new Producto(
+                    rs.getInt("codigo"),
+                    rs.getString("descripcion")  
+                );
+                productos.add(producto);
+            }
+        }
+        return productos;
     }
 }

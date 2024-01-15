@@ -3,7 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Controlador/MovimientoControlador.java</file>
+            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Modelo/Producto.java</file>
+            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Vista/frmBuscarProd.java</file>
+            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Controlador/ListaProdsControl.java</file>
+            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Modelo/ProductoModelo.java</file>
+            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Modelo/ExistenciaModelo.java</file>
+            <file>file:/C:/Users/Jorge%20Luchetta/Documents/ProjInventario/Inventario2/src/Controlador/ExistenciaControl.java</file>
         </group>
     </open-files>
 </project-private>
